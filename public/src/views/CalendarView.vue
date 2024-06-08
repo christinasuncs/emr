@@ -270,6 +270,9 @@
           this.calendarOptions.events.push({
             title: this.editedItem.title,
             date: this.editedItem.date, // Use current date as start
+            patient: this.editedItem.patient,
+            location: this.editedItem.location,
+            doctor: this.editedItem.doctor
           })
           const date = this.editedItem.date.split("T")
 
