@@ -1,0 +1,28 @@
+{
+    "appointments": [
+      {
+        "date": "2024-05-01T10:00:00Z",
+        "patient": {
+            "name": "John Doe"
+        },
+        "location": "Hospital A",
+        "doctor": "611f2a4eebc97b05f03d1a8f"
+    },
+    {
+        "date": "2024-05-02T11:00:00Z",
+        "patient": {
+            "name": "Jane Smith"
+        },
+        "location": "Clinic B",
+        "doctor": "611f2a4eebc97b05f03d1a8f"
+    },
+    {
+      "date": "2024-05-05T12:00:00Z",
+      "patient": {
+          "name": "Bob"
+      },
+      "location": "Hospital C",
+      "doctor": "611f2a4eebc97b05f03d1a8f"
+    }
+    ]
+  }
