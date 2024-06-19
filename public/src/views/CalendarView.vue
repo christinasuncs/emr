@@ -127,8 +127,73 @@
                 <v-btn
                   class="ms-auto"
                   variant="elevated"
+                  text="Edit"
+                  @click="openEditModal"
+                ></v-btn>
+                <v-btn
+                  class="ms-auto"
+                  variant="elevated"
                   text="Close"
                   @click="appointment_dialog = false"
+                ></v-btn>
+              </template>
+            </v-card>
+          </v-dialog>
+          <v-dialog v-model="edit_appointment_dialog" width="50%">
+            <v-card
+              max-width="1000"
+              prepend-icon="mdi-calendar-check"
+              title="Edit Appointment Info"
+            >
+              <v-container>
+                <v-row>
+                  <v-col cols="12" md="12" sm="12">
+                    <v-text-field
+                      v-model="selectedAppointment.title"
+                      label="Title"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="12" sm="12">
+                    <v-text-field
+                      v-model="selectedAppointment.date"
+                      label="Date"
+                      type="datetime-local"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="12" sm="12">
+                    <v-select
+                      v-model="selectedAppointment.patient"
+                      label="Patient"
+                      :items="patients.map(patient => patient.name)"
+                    ></v-select>
+                  </v-col>
+                  <v-col cols="12" md="12" sm="12">
+                    <v-text-field
+                      v-model="selectedAppointment.location"
+                      label="Location"
+                    ></v-text-field>
+                  </v-col>
+                  <v-col cols="12" md="12" sm="12">
+                    <v-select
+                      v-model="selectedAppointment.doctor"
+                      label="Doctor"
+                      :items="doctors.map(doctor => doctor.name)"
+                    ></v-select>
+                  </v-col>
+                </v-row>
+              </v-container>
+              <template v-slot:actions>
+                <v-btn
+                  class="ms-auto"
+                  variant="elevated"
+                  text="Confirm"
+                  @click="handleEditClick"
+                ></v-btn>
+                <v-btn
+                  class="ms-auto"
+                  variant="elevated"
+                  text="Cancel"
+                  @click="edit_appointment_dialog = false"
                 ></v-btn>
               </template>
             </v-card>
@@ -154,6 +219,7 @@
   import FullCalendar from "@fullcalendar/vue3"
   import dayGridPlugin from "@fullcalendar/daygrid"
   import interactionPlugin from "@fullcalendar/interaction" // for selectable
+  import moment from "moment"
   
   export default {
     components: {
@@ -171,6 +237,7 @@
         },
         dialog: false,
         appointment_dialog: false,
+        edit_appointment_dialog: false,
         selectedAppointment: {},
         editedItem: {
           title: "",
@@ -223,6 +290,7 @@
         this.dialog = true
       },
       handleEventClick(info) {
+        // console.log("tset")
         this.calendarOptions.events.forEach(event => {
           const date = new Date(event.date)
           if(event.title == info.event.title && info.event.start == date.toString()){
@@ -246,6 +314,41 @@
         this.selectedAppointment.doctor = doctorIdToNameMap[this.selectedAppointment.doctor]
 
         this.appointment_dialog = true
+      },
+      async handleEditClick(info) {
+        console.log(this.selectedAppointment)
+        try{
+          const patient_name = `${this.selectedAppointment.patient}`
+          const doctor_name = `${this.selectedAppointment.doctor}`
+          const patientNameToIdMap = {}
+          
+          this.patients.forEach(patient => {
+            patientNameToIdMap[patient.name] = patient;
+          })
+          const doctorNameToIdMap = {}
+          this.doctors.forEach(doctor => {
+            doctorNameToIdMap[doctor.name] = doctor;
+          })
+
+          this.selectedAppointment.patient = patientNameToIdMap[patient_name]._id
+          this.selectedAppointment.doctor = doctorNameToIdMap[doctor_name]._id
+          const patient_email = patientNameToIdMap[patient_name].email
+          await axios.put(`http://localhost:3000/api/appointments/${this.selectedAppointment._id}`, this.selectedAppointment);
+
+          console.log(patient_name)
+          console.log(patient_email)
+          console.log(this.selectedAppointment.date)
+          await axios.post('http://localhost:3000/api/email/update', {
+            name: patient_name,
+            email: patient_email,
+            message: `${this.selectedAppointment.title} on ${this.selectedAppointment.date.split("T")[0]} at ${this.selectedAppointment.date.split("T")[1]} at ${this.selectedAppointment.location}`
+          })
+          
+          this.edit_appointment_dialog = false
+          this.fetchAppointments()
+        } catch (error) {
+          console.error("Error editing appointments: ", error);
+        }
       },
       async addEvent() {
         try{
@@ -289,6 +392,17 @@
         } catch (error) {
           console.error("Error creating appointments: ", error);
         }
+      },
+      async openEditModal() {
+        this.appointment_dialog = false
+        this.edit_appointment_dialog = true
+
+        const date = moment(this.selectedAppointment.date).format("YYYY-MM-DDThh:mm")
+
+        // this.calendarOptions.events
+
+        this.selectedAppointment.date = date
+
       }
     },
   }

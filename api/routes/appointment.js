@@ -30,6 +30,21 @@ router.post('/new', async (req, res) => {
     }
 });
 
+router.put("/:id", async (req, res) => {
+    try {
+        const id = req.params.id;
+        const updates = req.body;
+
+        const updatedAppointment = await Appointment.findByIdAndUpdate(id, updates, {new: true});
+        if (!updatedAppointment) {
+            return res.status(404).json({message: "Appointment not found"});
+        }
+        res.json(updatedAppointment);
+    } catch (err) {
+        res.status(500).json({err: err.message});
+    }
+})
+
 //old appointment route
 // router.post('/new', async (req, res) => {
 //     const { date, doctor, patient, location, title } = req.body;
