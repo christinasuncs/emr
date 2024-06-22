@@ -14,6 +14,13 @@
     <div
     style="display: block; margin-left: auto; margin-right: auto; width: 90%;">
       <v-btn @click="handleDateClick">Add Event</v-btn>
+      <v-select
+        style="width: 20%;"
+        label="Filter by Patient"
+        v-model="filterPatient"
+        :items="getFilterOptions()"
+      ></v-select>    
+      <v-btn @click="applyFilter">Apply</v-btn>  
       <FullCalendar :options="calendarOptions" />
       <template>
         <div class="text-center pa-4">
@@ -254,7 +261,9 @@
           doctor: "",
         },
         patients: [],
-        doctors: []
+        doctors: [],
+        filterPatient: "",
+        allAppointments: []
       }
     },
     mounted() {
@@ -262,10 +271,29 @@
       this.fetchUsers()
     },
     methods: {
+      getFilterOptions(){
+        return ["All Patients", ...this.patients.map(patient => patient.name)]
+      },
+      applyFilter(){
+        const filterPatient = `${this.filterPatient}`
+        const patientNameToIdMap = {}
+        this.patients.forEach(patient => {
+          patientNameToIdMap[patient.name] = patient;
+        })
+
+        this.calendarOptions.events = this.allAppointments.filter(appt => {
+          if (filterPatient == "All Patients"){
+            return true
+          } else {
+            return appt.patient == patientNameToIdMap[filterPatient]._id
+          }          
+        })
+      },
       async fetchAppointments(){
         try{
           const appointments = await axios.get('http://localhost:3000/api/appointments/'); // change link to whatever it is
           this.calendarOptions.events = appointments.data;
+          this.allAppointments = appointments.data
         } catch (error) {
           console.error("Error fetching appointments: ", error);
         }
@@ -285,12 +313,9 @@
         }
       },
       handleDateClick() {
-        // console.log(info.dateStr)
-        // this.editedItem.date = info.dateStr
         this.dialog = true
       },
       handleEventClick(info) {
-        // console.log("tset")
         this.calendarOptions.events.forEach(event => {
           const date = new Date(event.date)
           if(event.title == info.event.title && info.event.start == date.toString()){
@@ -316,7 +341,6 @@
         this.appointment_dialog = true
       },
       async handleEditClick(info) {
-        console.log(this.selectedAppointment)
         try{
           const patient_name = `${this.selectedAppointment.patient}`
           const doctor_name = `${this.selectedAppointment.doctor}`
@@ -335,9 +359,6 @@
           const patient_email = patientNameToIdMap[patient_name].email
           await axios.put(`http://localhost:3000/api/appointments/${this.selectedAppointment._id}`, this.selectedAppointment);
 
-          console.log(patient_name)
-          console.log(patient_email)
-          console.log(this.selectedAppointment.date)
           await axios.post('http://localhost:3000/api/email/update', {
             name: patient_name,
             email: patient_email,
