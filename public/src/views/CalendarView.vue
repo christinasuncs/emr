@@ -14,13 +14,24 @@
     <div
     style="display: block; margin-left: auto; margin-right: auto; width: 90%;">
       <v-btn @click="handleDateClick">Add Event</v-btn>
-      <v-select
-        style="width: 20%;"
-        label="Filter by Patient"
-        v-model="filterPatient"
-        :items="getFilterOptions()"
-      ></v-select>    
-      <v-btn @click="applyFilter">Apply</v-btn>  
+      <v-divider></v-divider>
+      <div style="display: flex;">
+        <v-select
+          style="width: 20%; margin-right: 1%;"
+          label="Filter by Patient"
+          v-model="filterOptions.patient"
+          :items="getPatientFilterOptions()"
+        ></v-select>  
+        <v-select
+          style="width: 20%; margin-right: 1%;"
+          label="Filter by Doctor"
+          v-model="filterOptions.doctor"
+          :items="getDoctorFilterOptions()"
+        ></v-select>   
+        <v-btn @click="applyFilter" style="margin-right: 1%;">Apply</v-btn>  
+        <v-btn @click="clearFilters">Clear</v-btn>
+      </div>
+        
       <FullCalendar :options="calendarOptions" />
       <template>
         <div class="text-center pa-4">
@@ -262,7 +273,10 @@
         },
         patients: [],
         doctors: [],
-        filterPatient: "",
+        filterOptions: {
+          patient: "All Patients",
+          doctor: "All Doctors"
+        },
         allAppointments: []
       }
     },
@@ -271,23 +285,41 @@
       this.fetchUsers()
     },
     methods: {
-      getFilterOptions(){
+      getPatientFilterOptions(){
         return ["All Patients", ...this.patients.map(patient => patient.name)]
       },
+      getDoctorFilterOptions(){
+        return ["All Doctors", ...this.doctors.map(doctor => doctor.name)]
+      },
       applyFilter(){
-        const filterPatient = `${this.filterPatient}`
+        const filterPatient = `${this.filterOptions.patient}`
         const patientNameToIdMap = {}
         this.patients.forEach(patient => {
           patientNameToIdMap[patient.name] = patient;
         })
 
-        this.calendarOptions.events = this.allAppointments.filter(appt => {
-          if (filterPatient == "All Patients"){
-            return true
-          } else {
-            return appt.patient == patientNameToIdMap[filterPatient]._id
-          }          
+        const filterDoctor = `${this.filterOptions.doctor}`
+        const doctorNameToIdMap = {}
+        this.doctors.forEach(doctor => {
+          doctorNameToIdMap[doctor.name] = doctor;
         })
+
+        this.calendarOptions.events = this.allAppointments.filter(appt => {
+          if (filterPatient == "All Patients" && filterDoctor == "All Doctors"){
+            return true
+          } else if (filterDoctor == "All Doctors") {
+            return appt.patient == patientNameToIdMap[filterPatient]._id
+          } else if (filterPatient == "All Patients") {
+            return appt.doctor == doctorNameToIdMap[filterDoctor]._id
+          } else {
+            return (appt.patient == patientNameToIdMap[filterPatient]._id && appt.doctor == doctorNameToIdMap[filterDoctor]._id)
+          }
+        })
+      },
+      clearFilters(){
+        this.calendarOptions.events = this.allAppointments
+        this.filterOptions.patient = "All Patients"
+        this.filterOptions.doctor = "All Doctors"
       },
       async fetchAppointments(){
         try{
