@@ -15,12 +15,12 @@ router.post('/new', async (req, res) => {
             location: location, 
             title: title 
         });
-
         // Find the patient (user) and associate the appointment
         const user = await User.findById(patient);
         if (!user) {
             return res.status(404).json({ error: 'Patient not found' });
         }
+
         user.appointments.push(newAppointment._id);
         await user.save();
 

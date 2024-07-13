@@ -431,7 +431,6 @@
             doctor: this.editedItem.doctor
           })
           const date = this.editedItem.date.split("T")
-
           this.dialog = false
 
           // send email

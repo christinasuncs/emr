@@ -31,6 +31,13 @@
                 </div>
               </div>
             </div>
+            <v-btn
+              class="ms-auto"
+              color="blue-darken-1"
+              variant="elevated"
+              text="Add Patient"
+              @click="newPatientDialog = true"
+            ></v-btn>
             <div class="card">
               <div class="card-content">
                 <div class="content">
@@ -85,6 +92,52 @@
         </div>
       </div>
     </section>
+    <!-- Add Patient Dialog -->
+    <v-dialog v-model="newPatientDialog" max-width="500">
+    <v-card>
+      <v-card-title>Add New Patient</v-card-title>
+      <v-card-text>
+        <!--Name-->
+        <div class="field">
+          <label class="label">Name</label>
+          <div class="control">
+            <input class="input" v-model="newPatientData.name" />
+          </div>
+        </div>
+        <!--Email-->
+        <div class="field">
+          <label class="label">Email</label>
+          <div class="control">
+            <input class="input" v-model="newPatientData.email" />
+          </div>
+        </div>
+        <!--Age-->
+        <div class="field">
+          <label class="label">Age</label>
+          <div class="control">
+            <input class="input" type="number" v-model="newPatientData.age" />
+          </div>
+        </div>
+        <!--Sex-->
+        <div class="field">
+          <label class="label">Sex</label>
+          <div class="control">
+            <div class="select">
+              <select v-model="newPatientData.sex">
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      </v-card-text>
+      <!--Save or Cancel-->
+      <v-card-actions>
+        <v-btn color="primary" @click="saveNewPatient">Save</v-btn>
+        <v-btn color="error" @click="newPatientDialog = false">Cancel</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 
     <!-- Edit Patient Dialog -->
   <v-dialog v-model="showEditDialog" max-width="500">
@@ -237,9 +290,20 @@ export default {
       patients: [],
       doctors: [],
       showEditDialog: false,
+      newPatientDialog: false,
       editPatientData: {
         immunizations: [],
         appointments: []
+      },
+      newPatientData: {
+        name: "",
+        email: "",
+        age: "",
+        sex: "",
+        medicationsString: "",
+        immunizations: [],
+        appointments: [],
+        labReports: ""
       },
       newImmunization: {
         name: "",
@@ -273,6 +337,22 @@ export default {
   }
   },
   methods: {
+    async saveNewPatient() {
+      // console.log(this.newPatientData)
+      try{
+        const newPatient = {
+          ...this.newPatientData,
+          medications: this.newPatientData.medicationsString.split(",").map(drugName => ({ drugName: drugName.trim() })),
+          role: "Patient"
+        }
+        await axios.post('http://localhost:3000/api/user/', newPatient);
+        this.newPatientDialog = false
+        this.getPatients()
+      } catch (error) {
+        console.error("Error creating new patient: ", error);
+      }
+
+    },
     async getPatients() {
       try{
         const patients = await axios.get('http://localhost:3000/api/user/patients/'); 
@@ -359,8 +439,6 @@ export default {
           ...this.editPatientData,
           medications: this.editPatientData.medicationsString.split(",").map(drugName => ({ drugName: drugName.trim() }))
         };
-        console.log(updatedPatient)
-        console.log(updatedPatient._id)
 
         await axios.put(`http://localhost:3000/api/user/${updatedPatient._id}`, updatedPatient);
         const index = this.patients.findIndex(patient => patient._id === updatedPatient._id);

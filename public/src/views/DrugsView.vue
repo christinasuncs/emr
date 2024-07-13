@@ -13,7 +13,12 @@
       <v-text-field v-model="search" label="Search Drugs" class="mb-4"></v-text-field>
 
       <!-- Drug List -->
-      <v-data-table :headers="headers" :items="filteredDrugs" :search="search" class="elevation-1" :loading="loading">
+      <v-data-table :headers="headers" :items="filteredDrugs" :search="search" class="elevation-1" :loading="loading" :items-per-page-options="[
+          {value: 10, title: '10'},
+          {value: 25, title: '25'},
+          {value: 50, title: '50'},
+          {value: 100, title: '100'}
+        ]">
           <template v-slot:top>
             <v-toolbar flat>
               <v-toolbar-title>Drug List</v-toolbar-title>

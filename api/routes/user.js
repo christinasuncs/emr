@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const User = require("../models/User.js");
 const Immunization = require("../models/Immunization.js");
+const Appointment = require('../models/Appointment');
 const jwt = require('../middleware/jwt');
 
 //get all users
@@ -61,14 +62,29 @@ router.get('/:userId', async (req, res) => {
 
 // Add a new user
 router.post('/', async (req, res) => {
+	const {name, email, age, sex, medications, lab_reports, role} = req.body;
 	try {
-		const newUser = await User.create(req.body);
+		const newUser = await User.create({
+			name: name, 
+			email: email,
+			age: age, 
+			sex: sex, 
+			medications: medications, 
+			immunizations: [], 
+			appointments: [], 
+			lab_reports: lab_reports, 
+			role: role
+		});
+
+
+
 		res.status(201).json(newUser);
 	} catch (error) {
 		console.error('Error adding user:', error);
 		res.status(500).json({ error: 'Server error' });
 	}
 });
+
 
 //update user and add drug
 router.put('/:userId/addDrug', async (req, res) => {
@@ -100,13 +116,16 @@ router.put('/:userId/addDrug', async (req, res) => {
 router.put('/:userId', async (req, res) => {
 	const { userId } = req.params;
 	const updateData = req.body;
-  
+	const appointmentToSave = updateData.appointments.pop()
 	try {
-	  // find the user by their userId and update it with the new data
-	  const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
-	  if (!user) {
-		return res.status(404).json({ error: 'User not found' });
-	  }
+		const newAppointment = await Appointment.create(appointmentToSave);
+		updateData.appointments.map(appt => appt._id)
+		updateData.appointments.push(newAppointment._id)
+		// find the user by their userId and update it with the new data
+		const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
   
 	  // return the updated user
 	  res.json(user);
