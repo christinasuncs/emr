@@ -18,7 +18,7 @@ require('./utils/auth')();
 
 
 const corsOptions = {
-    origin:'http://localhost:5173', 
+    origin:'https://electronic-medical-record-website.onrender.com', 
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 }

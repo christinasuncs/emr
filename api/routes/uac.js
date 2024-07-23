@@ -7,13 +7,13 @@ router.get('/google', passport.authenticate('google', { scope: ['email', 'profil
 router.get(
     '/google/callback', 
     passport.authenticate('google', {
-        failureRedirect: 'http://localhost:5173/login',
+        failureRedirect: 'https://electronic-medical-record-website.onrender.com/login',
         session: false
     }), 
     (req, res) => {
         const token = req.user.generateJWT();
         res.cookie('x-auth-cookie', token);
-        res.redirect('http://localhost:5173/patients');
+        res.redirect('https://electronic-medical-record-website.onrender.com/patients');
     }
 );
 
