@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:3000/api/user';
+const API_URL = 'https://electronic-medical-record-uqm3.onrender.com/api/user';
 
 // Get all users
 export const getAllUsers = () => {

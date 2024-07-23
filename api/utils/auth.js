@@ -31,7 +31,7 @@ const init = () => {
     passport.use('google', new GoogleStrategy({
         clientID: process.env.GOOGLE_CLIENT_ID,
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-        callbackURL: 'http://localhost:3000/api/uac/google/callback'
+        callbackURL: 'https://electronic-medical-record-uqm3.onrender.com/api/uac/google/callback'
     },
     function(_request, _accessToken, _refreshToken, profile, done) {
         User.findOrCreate({ email: profile.email }, { name: profile.displayName, role: 'Patient' }, function (err, user) {

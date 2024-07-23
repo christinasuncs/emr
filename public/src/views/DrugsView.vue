@@ -132,7 +132,7 @@
       },
       async fetchPatients() {
       try {
-        const response = await fetch('http://localhost:3000/api/user/patients');
+        const response = await fetch('https://electronic-medical-record-uqm3.onrender.com/api/user/patients');
         if (response.ok) {
           const patients = await response.json();
           // map patients array to include a 'title' property

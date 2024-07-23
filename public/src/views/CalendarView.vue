@@ -334,7 +334,7 @@
       },
       async fetchAppointments(){
         try{
-          const appointments = await axios.get('http://localhost:3000/api/appointments/'); // change link to whatever it is
+          const appointments = await axios.get('https://electronic-medical-record-uqm3.onrender.com/api/appointments/'); // change link to whatever it is
           this.calendarOptions.events = appointments.data;
           this.allAppointments = appointments.data
         } catch (error) {
@@ -343,7 +343,7 @@
       },
       async fetchUsers() {
         try{
-          const users = await axios.get('http://localhost:3000/api/user/'); // change link to whatever it is
+          const users = await axios.get('https://electronic-medical-record-uqm3.onrender.com/api/user/'); // change link to whatever it is
           users.data.forEach(user => {
             if(user.role == "Patient") {
               this.patients.push(user)
@@ -400,9 +400,9 @@
           this.selectedAppointment.patient = patientNameToIdMap[patient_name]._id
           this.selectedAppointment.doctor = doctorNameToIdMap[doctor_name]._id
           const patient_email = patientNameToIdMap[patient_name].email
-          await axios.put(`http://localhost:3000/api/appointments/${this.selectedAppointment._id}`, this.selectedAppointment);
+          await axios.put(`https://electronic-medical-record-uqm3.onrender.com/api/appointments/${this.selectedAppointment._id}`, this.selectedAppointment);
 
-          await axios.post('http://localhost:3000/api/email/update', {
+          await axios.post('https://electronic-medical-record-uqm3.onrender.com/api/email/update', {
             name: patient_name,
             email: patient_email,
             message: `${this.selectedAppointment.title} on ${this.selectedAppointment.date.split("T")[0]} at ${this.selectedAppointment.date.split("T")[1]} at ${this.selectedAppointment.location}`
@@ -431,7 +431,7 @@
           this.editedItem.patient = patientNameToIdMap[patient_name]._id
           this.editedItem.doctor = doctorNameToIdMap[doctor_name]._id
           const patient_email = patientNameToIdMap[patient_name].email
-          await axios.post('http://localhost:3000/api/appointments/new', this.editedItem);
+          await axios.post('https://electronic-medical-record-uqm3.onrender.com/api/appointments/new', this.editedItem);
 
           // Generate a new event and push it to the events array
           this.calendarOptions.events.push({
@@ -445,7 +445,7 @@
           this.dialog = false
 
           // send email
-          await axios.post('http://localhost:3000/api/email/reminder', {
+          await axios.post('https://electronic-medical-record-uqm3.onrender.com/api/email/reminder', {
             name: patient_name,
             email: patient_email,
             message: `${this.editedItem.title} on ${date[0]} at ${date[1]} at ${this.editedItem.location}`

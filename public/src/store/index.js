@@ -40,7 +40,7 @@ const store = createStore({
 	actions: {
 		async checkAuth({ commit }) {
 			try {
-				const response = await axios.get('http://localhost:3000/api/user/profile', { withCredentials: true });
+				const response = await axios.get('https://electronic-medical-record-uqm3.onrender.com/api/user/profile', { withCredentials: true });
 				console.log(response);
 				commit('setUser', response);
 			} catch (error) {

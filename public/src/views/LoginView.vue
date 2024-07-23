@@ -11,7 +11,7 @@
               <div>
                 <!-- <button class="button is-medium" @click="handleLogin()"> -->
                 <button class="button is-medium">
-                  <a href="http://localhost:3000/api/uac/google">
+                  <a href="https://electronic-medical-record-uqm3.onrender.com/api/uac/google">
                     <img src="../assets/images/google_logo.png" alt="Google Logo" style="width: 20px; height: 20px; margin-right: 5px;">
                     Login with Google
                   </a>  

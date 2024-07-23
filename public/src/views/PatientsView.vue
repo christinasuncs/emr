@@ -335,7 +335,7 @@ export default {
           medications: this.newPatientData.medicationsString.split(",").map(drugName => ({ drugName: drugName.trim() })),
           role: "Patient"
         }
-        await axios.post('http://localhost:3000/api/user/', newPatient);
+        await axios.post('https://electronic-medical-record-uqm3.onrender.com/api/user/', newPatient);
         this.newPatientDialog = false
         this.getPatients()
       } catch (error) {
@@ -345,7 +345,7 @@ export default {
     },
     async getPatients() {
       try{
-        const patients = await axios.get('http://localhost:3000/api/user/patients/'); 
+        const patients = await axios.get('https://electronic-medical-record-uqm3.onrender.com/api/user/patients/'); 
         this.patients = patients.data;
       } catch (error) {
         console.error("Error fetching appointments: ", error);
@@ -353,7 +353,7 @@ export default {
     },
     async fetchDoctors() {
         try {
-            const response = await axios.get('http://localhost:3000/api/user/doctors');
+            const response = await axios.get('https://electronic-medical-record-uqm3.onrender.com/api/user/doctors');
             this.doctors = response.data;
         } catch (error) {
             console.error("Error fetching doctors: ", error);
@@ -431,7 +431,7 @@ export default {
           medications: this.editPatientData.medicationsString.split(",").map(drugName => ({ drugName: drugName.trim() }))
         };
 
-        await axios.put(`http://localhost:3000/api/user/${updatedPatient._id}`, updatedPatient);
+        await axios.put(`https://electronic-medical-record-uqm3.onrender.com/api/user/${updatedPatient._id}`, updatedPatient);
         const index = this.patients.findIndex(patient => patient._id === updatedPatient._id);
         if (index !== -1) {
           // Update the patient directly in the array
