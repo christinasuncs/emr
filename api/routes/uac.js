@@ -12,8 +12,8 @@ router.get(
     }), 
     (req, res) => {
         const token = req.user.generateJWT();
-        res.cookie('x-auth-cookie', token);
-        res.redirect('https://electronic-medical-record-website.onrender.com/patients');
+        res.cookie('x-auth-cookie', token, { sameSite: 'None', secure: true });
+        res.redirect('https://electronic-medical-record-website.onrender.com');
     }
 );
 
