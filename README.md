@@ -1,5 +1,5 @@
-# Final Project for Grade 12 Computer Science (ICS4U)
-This project was originally developed as a part of a grade 12 computer science course. It started as a team with 5 members and has since been expanded with additional features and enhancements by me.
+# Final Project for Grade 11/12 Computer Science (ICS4U)
+This project was originally developed as a part of a grade 12 level computer science course. It started as a team with 5 members and has since been expanded with additional features and enhancements by me.
 
 # Project Overview
 This project is an Electronic Medical Record (EMR/EHR) System designed to facilitate scheduling, viewing, and managing appointments. It includes interactive UI elements, backend integration, and email notifications to improve user experience.
