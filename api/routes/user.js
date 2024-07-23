@@ -116,61 +116,79 @@ router.put('/:userId/addDrug', async (req, res) => {
 router.put('/:userId', async (req, res) => {
 	const { userId } = req.params;
 	const updateData = req.body;
-	const appointmentToSave = updateData.appointments.pop()
+	const appointmentToSave = updateData.appointments.filter(appt => appt._id == undefined)
+	updateData.appointments = updateData.appointments.filter(appt => appt._id != undefined)
+
+	const immunizationToSave = updateData.immunizations.filter(immu => immu._id == undefined)
+	updateData.immunizations = updateData.immunizations.filter(immu => immu._id != undefined)
 	try {
-		const newAppointment = await Appointment.create(appointmentToSave);
 		updateData.appointments.map(appt => appt._id)
-		updateData.appointments.push(newAppointment._id)
+		for (let i = 0; i < appointmentToSave.length; i++) {
+			const newAppointment = await Appointment.create(appointmentToSave[i]);
+			updateData.appointments.push(newAppointment._id)
+		}
+
+		updateData.immunizations.map(immu => immu._id)
+		for (let i = 0; i < immunizationToSave.length; i++) {
+			const newImmunization = await Immunization.create(immunizationToSave[i]);
+			updateData.immunizations.push(newImmunization._id)
+		}
+
 		// find the user by their userId and update it with the new data
 		const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
 		if (!user) {
 			return res.status(404).json({ error: 'User not found' });
 		}
   
-	  // return the updated user
-	  res.json(user);
+	    // return the updated user
+	    res.json(user);
 	  
-	  //if there is an error console log it
+	    //if there is an error console log it
 	} catch (error) {
-	  console.error('Error updating user:', error);
-	  res.status(500).json({ error: 'Server error' });
+	    console.error('Error updating user:', error);
+	    res.status(500).json({ error: 'Server error' });
 	}
   });
 
   // make a new immunization and assign it to a user
 router.post('/:userId/immunizations', async (req, res) => {
 	const { userId } = req.params;
-	const { name, date, next } = req.body;
-  
+	// const { name, date, next } = req.body;
+	const immunizations = req.body
+	const immunizationToSave = immunizations
+	console.log(immunizationToSave)
 	try {
-	  // first find the user by userId
-	  const user = await User.findById(userId);
-	  if (!user) {
-		return res.status(404).json({ error: 'User not found' });
-	  }
+		// first find the user by userId
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({ error: 'User not found' });
+		}
   
-	  // create a new immunization
-	  const newImmunization = new Immunization({
-		name,
-		date,
-		next,
-	  });
-  
-	  // save the immunization
-	  await newImmunization.save();
-  
-	  // assign the immunization to the user
-	  user.immunizations.push(newImmunization._id);
-	  await user.save();
-  
-	  // return the new immunization
-	  res.status(201).json(newImmunization);
+		// create a new immunization
+		// const newImmunization = new Immunization({
+		// 	name,
+		// 	date,
+		// 	next,
+		// });
 
-	  //error handling in case of server error
-	} catch (error) {
-	  console.error('Error creating immunization:', error);
-	  res.status(500).json({ error: 'Server error' });
-	}
-  });
+		const newImmunization = await Immunization.create(immunizationToSave)
+		// console.log(newImmunization)
+	
+		// save the immunization
+		await newImmunization.save();
+	
+		// assign the immunization to the user
+		user.immunizations.push(newImmunization._id);
+		await user.save();
+  
+		// return the new immunization
+		res.status(201).json(newImmunization);
+
+		//error handling in case of server error
+		} catch (error) {
+		console.error('Error creating immunization:', error);
+		res.status(500).json({ error: 'Server error' });
+		}
+	});
 
 module.exports = router;

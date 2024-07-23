@@ -28,7 +28,6 @@
           v-model="filterOptions.doctor"
           :items="getDoctorFilterOptions()"
         ></v-select>   
-        <v-btn @click="applyFilter" style="margin-right: 1%;">Apply</v-btn>  
         <v-btn @click="clearFilters">Clear</v-btn>
       </div>
         
@@ -283,6 +282,18 @@
     mounted() {
       this.fetchAppointments()
       this.fetchUsers()
+    },
+    watch: {
+      // watch patient filter
+      'filterOptions.patient': function(newValue, oldValue) {
+        this.applyFilter()
+      },
+
+      // watch doctor filter
+      'filterOptions.doctor': function(newValue, oldValue) {
+        this.applyFilter()
+      }
+
     },
     methods: {
       getPatientFilterOptions(){

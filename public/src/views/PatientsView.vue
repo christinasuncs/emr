@@ -234,16 +234,6 @@
                   </select>
                 </div>
               </div>
-
-              <!-- Patient Dropdown -->
-              <div class="control">
-                <div class="select">
-                  <select v-model="newAppointment.patient">
-                    <option disabled value="">Select Patient</option> <!-- Placeholder -->
-                    <option v-for="patient in patients" :value="patient._id">{{ patient.name }}</option>
-                  </select>
-                </div>
-              </div>
               <div class="control">
                 <input class="input" v-model="newAppointment.location" placeholder="Location" />
               </div>
@@ -397,7 +387,7 @@ export default {
         location: "",
         title: ""
       };
-      this.editPatientData.id = patient.id;
+      this.editPatientData.id = patient._id;
     },
 
     // set showEditDialog to false to close it
@@ -420,6 +410,7 @@ export default {
     },
     addAppointment() {
       if (this.newAppointment.date && this.newAppointment.title) {
+        this.newAppointment.patient = this.editPatientData._id
         this.editPatientData.appointments.push({ ...this.newAppointment });
         this.newAppointment = {
           date: "",
