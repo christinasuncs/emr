@@ -37,7 +37,7 @@ const logout = () => {
     <header>
       <nav class="navbar" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
-          <RouterLink class="navbar-item" to="/" v-if="isLoggedIn">Dashboard</RouterLink>
+          <RouterLink class="navbar-item" to="/">Dashboard</RouterLink>
           <!-- Navbar burger -->
           <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false" @click="toggleMenu">
             <span aria-hidden="true"></span>
@@ -49,16 +49,16 @@ const logout = () => {
         <!-- Navbar menu -->
         <div :class="{ 'navbar-menu': true, 'is-active': isMenuOpen }">
           <div class="navbar-start">
-            <RouterLink class="navbar-item" to="/patients" v-if="isLoggedIn">Patients</RouterLink>
-            <RouterLink class="navbar-item" to="/calendar" v-if="isLoggedIn">Calendar</RouterLink>
-            <RouterLink class="navbar-item" to="/drugs" v-if="isLoggedIn">Drugs</RouterLink>
+            <RouterLink class="navbar-item" to="/patients">Patients</RouterLink>
+            <RouterLink class="navbar-item" to="/calendar">Calendar</RouterLink>
+            <RouterLink class="navbar-item" to="/drugs">Drugs</RouterLink>
           </div>
           <div class="navbar-end">
             <div class="navbar-item">
-              <div class="buttons">
+              <!-- <div class="buttons">
                 <RouterLink v-if="!isLoggedIn" class="button is-light" to="/login">Log in</RouterLink>
                 <button v-if="isLoggedIn" class="button is-danger" @click="logout">Logout</button>
-              </div>
+              </div> -->
             </div>
           </div>
         </div>
